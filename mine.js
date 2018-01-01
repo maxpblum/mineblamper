@@ -10,42 +10,42 @@ class MineSpot {
     this.button = document.createElement('button');
     this.button.className = 'mine-button';
     this.button.onclick = () => this.processClick();
-		this.button.addEventListener('contextmenu', (ev) => {
-			ev.preventDefault();
-			this.toggleFlag();
-			return false;
-		}, false);
+    this.button.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+      this.toggleFlag();
+      return false;
+    }, false);
     this.element.appendChild(this.button);
     this.clickCallback = clickCallback;
-		this.flagCallback = flagCallback;
+    this.flagCallback = flagCallback;
   }
 
-	readyForWin() {
-		const isMarkedMine =
-			this.value === -1 &&
-			!this.button.disabled &&
-			this.button.innerText === String.fromCodePoint(128681);
-		const isClearedNonMine =
-			this.value !== -1 &&
-			this.button.disabled;
-		return isMarkedMine || isClearedNonMine;
-	}
+  readyForWin() {
+    const isMarkedMine =
+      this.value === -1 &&
+      !this.button.disabled &&
+      this.button.innerText === String.fromCodePoint(128681);
+    const isClearedNonMine =
+      this.value !== -1 &&
+      this.button.disabled;
+    return isMarkedMine || isClearedNonMine;
+  }
 
-	setWon() {
-		if (this.value === -1) {
-			this.button.disabled = true;
-			this.button.innerText = String.fromCodePoint(128512);
-		}
-	}
+  setWon() {
+    if (this.value === -1) {
+      this.button.disabled = true;
+      this.button.innerText = String.fromCodePoint(128512);
+    }
+  }
 
-	toggleFlag() {
-		if (this.button.innerText) {
-			this.button.innerText = '';
-		} else {
-			this.button.innerText = String.fromCodePoint(128681);
-		}
-		this.flagCallback();
-	}
+  toggleFlag() {
+    if (this.button.innerText) {
+      this.button.innerText = '';
+    } else {
+      this.button.innerText = String.fromCodePoint(128681);
+    }
+    this.flagCallback();
+  }
 
   getText() {
     if (this.value === 0) return '';
@@ -75,7 +75,7 @@ class MineSpot {
       this.button.innerText = this.getText();
     }
 
-		this.clickCallback(this.value);
+    this.clickCallback(this.value);
   }
 }
 
@@ -122,46 +122,46 @@ class MineBoard {
     this.allCoordinates.forEach(([row, col]) => {
       if (this.spaces[row][col].isMine()) return;
 
-			this.forEachNeighbor(row, col, ([i, j]) => {
-				if (this.spaces[i][j].isMine()) {
-					this.spaces[row][col].increment();
-				}
-			});
+      this.forEachNeighbor(row, col, ([i, j]) => {
+        if (this.spaces[i][j].isMine()) {
+          this.spaces[row][col].increment();
+        }
+      });
     });
   }
 
   afterClick(row, col, value) {
-		if (value === -1) {
-			this.allCoordinates.forEach(([i, j]) => this.spaces[i][j].forceClick())
-		} else if (value === 0) {
-			this.forEachNeighbor(row, col, ([i, j]) => {
-				const horizontal = row === i;
-				const vertical = col === j;
-				if ((horizontal || vertical) || this.spaces[i][j].value > 0) {
-					this.spaces[i][j].forceClick();
-				}
-			});
-		}
-		this.checkForWin();
+    if (value === -1) {
+      this.allCoordinates.forEach(([i, j]) => this.spaces[i][j].forceClick())
+    } else if (value === 0) {
+      this.forEachNeighbor(row, col, ([i, j]) => {
+        const horizontal = row === i;
+        const vertical = col === j;
+        if ((horizontal || vertical) || this.spaces[i][j].value > 0) {
+          this.spaces[i][j].forceClick();
+        }
+      });
+    }
+    this.checkForWin();
   }
 
-	forEachNeighbor(row, col, operation) {
-		for (let i = row - 1; i <= row + 1; i++) {
-			for (let j = col - 1; j <= col + 1; j++) {
-				const isSame = i === row && j === col;
-				const onBoard = i >= 0 && i < this.numRows && j >= 0 && j < this.numRows;
-				if (onBoard && !isSame) {
-					operation([i, j]);
-				}
-			}
-		}
-	}
+  forEachNeighbor(row, col, operation) {
+    for (let i = row - 1; i <= row + 1; i++) {
+      for (let j = col - 1; j <= col + 1; j++) {
+        const isSame = i === row && j === col;
+        const onBoard = i >= 0 && i < this.numRows && j >= 0 && j < this.numRows;
+        if (onBoard && !isSame) {
+          operation([i, j]);
+        }
+      }
+    }
+  }
 
-	checkForWin() {
-		if (this.allCoordinates.every(([i, j]) => this.spaces[i][j].readyForWin())) {
-			this.allCoordinates.forEach(([i, j]) => this.spaces[i][j].setWon());
-		}
-	}
+  checkForWin() {
+    if (this.allCoordinates.every(([i, j]) => this.spaces[i][j].readyForWin())) {
+      this.allCoordinates.forEach(([i, j]) => this.spaces[i][j].setWon());
+    }
+  }
 }
 
 class ControlPanel {
